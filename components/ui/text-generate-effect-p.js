@@ -13,7 +13,7 @@ export const TextGenerateEffectP = ({ words, className }) => {
         opacity: 1,
       },
       {
-        duration: 1.35,
+        duration: 1,
         delay: stagger(0.2),
       }
     );

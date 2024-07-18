@@ -27,13 +27,13 @@ export default function Hero() {
         <div className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black-100 bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]" />
       </div>
 
-      <div className="flex justify-center relative my-20 z-10">
+      <div className="flex justify-center relative mb-20 mt-40 sm:mt-20 lg:mt-32 z-10">
         <div className="flex flex-col items-center justify-center max-w-[90vw] lg:max-w-[60vw]">
           <h2 className="uppercase tracking-widest text-xs text-center text-blue-100 max-w-80">
             Dynamic Web Magic with React.Js
           </h2>
           <TextGenerateEffect
-            className="text-center text-[40px] md:text-5xl lg:text-6xl font-extrabold"
+            className="text-center text-4xl lg:text-6xl font-extrabold mt-5"
             words="Transforming Code into Seamless User Experiences"
           />
           <TextGenerateEffectP
