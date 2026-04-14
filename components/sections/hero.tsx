@@ -6,6 +6,7 @@ import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import { useLenis } from "lenis/react";
 import { SplitText } from "gsap/SplitText";
+import { Spotlight } from "../ui/spotlight";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Eye, Mail, ArrowDown } from "lucide-react";
@@ -68,7 +69,7 @@ export function Hero() {
   return (
     <div
       ref={container}
-      className="relative flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] pt-20 pb-16 overflow-hidden"
+      className="relative flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] pt-32 sm:pt-20 pb-16 overflow-hidden"
     >
       {/* Light glow animation under the Navbar */}
       <div
@@ -83,6 +84,17 @@ export function Hero() {
       <ReactSnapshot />
       <NodeSnapshot />
 
+      {/* Spotlight Effects */}
+      <Spotlight
+        className="hidden md:block -top-40 -left-10 md:-left-72 md:-top-20 h-[50vh]"
+        fill="white"
+      />
+
+      <Spotlight
+        className="hidden md:block -top-40 right-10 md:-right-72 md:-top-20 h-[50vh] -scale-x-100"
+        fill="white"
+      />
+
       <section className="relative z-10 flex flex-col items-center justify-center w-full px-4 text-center -mt-16">
         {/* Availability Badge */}
         <div className="hero-element opacity-0 translate-y-8">
@@ -95,7 +107,7 @@ export function Hero() {
         </div>
 
         {/* Name / Heading */}
-        <h1 className="hero-heading invisible font-montserrat text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8">
+        <h1 className="hero-heading text-primary invisible font-montserrat text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8">
           Youssef Mohammed
         </h1>
 
@@ -137,7 +149,7 @@ export function Hero() {
         </div>
 
         {/* Scroll Down Arrow */}
-        <div className="hero-element opacity-0 translate-y-8">
+        <div className="hero-element opacity-0 translate-y-8 md:absolute -bottom-20">
           <button
             onClick={scrollToAbout}
             className="flex items-center justify-center w-12 h-12 rounded-full border border-border/40 bg-secondary/50 dark:bg-card backdrop-blur-sm hover:bg-card/90 dark:hover:bg-secondary/90 transition-all animate-bounce cursor-pointer focus:outline-none"

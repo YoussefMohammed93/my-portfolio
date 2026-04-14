@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Navbar } from "@/components/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { LenisProvider } from "@/components/lenis-provider";
+import { CustomCursor } from "@/components/ui/custom-cursor";
 import { IBM_Plex_Sans, Montserrat, Space_Grotesk } from "next/font/google";
 
 const spaceGrotesk = Space_Grotesk({
@@ -68,6 +69,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-sans">
+        <CustomCursor />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

@@ -6,25 +6,45 @@ import Image from "next/image";
 import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Code2, FolderGit2, Users } from "lucide-react";
+import { MagneticWrapper } from "@/components/ui/magnetic-wrapper";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
+
+const stats = [
+  {
+    label: "Years Experience",
+    value: "3+",
+    icon: Code2,
+  },
+  {
+    label: "Projects Delivered",
+    value: "45+",
+    icon: FolderGit2,
+  },
+  {
+    label: "Clients Worldwide",
+    value: "17+",
+    icon: Users,
+  },
+];
 
 export function About() {
   const container = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
-      // Floating blobs animations
+      // Background Blooms Animation
       gsap.to(".about-blob", {
-        x: "random(-40, 40)",
-        y: "random(-40, 40)",
-        rotation: "random(-15, 15)",
-        duration: "random(10, 15)",
+        x: "random(-50, 50)",
+        y: "random(-50, 50)",
+        rotation: "random(-20, 20)",
+        duration: "random(12, 18)",
         repeat: -1,
         yoyo: true,
         ease: "sine.inOut",
         stagger: {
-          each: 2,
+          each: 2.5,
           from: "random",
         },
       });
@@ -32,36 +52,44 @@ export function About() {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: container.current,
-          start: "top 80%",
+          start: "top 75%",
           end: "bottom 20%",
           toggleActions: "play none none none",
         },
         defaults: { ease: "power3.out" },
       });
-      // ... remainder of the timeline logic stays the same
-      tl.to(".about-heading", {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-      })
-        .to(
-          ".about-text",
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.8,
-            stagger: 0.15,
-          },
+
+      // Heading Reveal
+      tl.fromTo(
+        ".about-heading",
+        { y: 60, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8 },
+      )
+        .fromTo(
+          ".about-line",
+          { scaleX: 0, opacity: 0, transformOrigin: "left center" },
+          { scaleX: 1, opacity: 1, duration: 0.8, ease: "power4.out" },
           "-=0.4",
         )
-        .to(
-          ".about-image",
-          {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            duration: 1,
-          },
+        // Image Side Reveal
+        .fromTo(
+          ".about-image-wrapper",
+          { x: 80, opacity: 0, scale: 0.95 },
+          { x: 0, opacity: 1, scale: 1, duration: 1.2, ease: "power4.out" },
+          "-=0.6",
+        )
+        // Text Content Animation
+        .fromTo(
+          ".about-text-content",
+          { y: 40, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, stagger: 0.15 },
+          "-=1.0",
+        )
+        // Stat Cards Stagger Reveal
+        .fromTo(
+          ".about-stat-card",
+          { y: 30, opacity: 0, scale: 0.9 },
+          { y: 0, opacity: 1, scale: 1, duration: 0.6, stagger: 0.15 },
           "-=0.4",
         );
     },
@@ -74,94 +102,110 @@ export function About() {
       ref={container}
       className="relative py-24 md:py-32 px-4 bg-background overflow-hidden"
     >
-      {/* Background Elements — Glass Blobs & Noise */}
+      {/* Background Elements */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-        {/* Noise overlay */}
-        <div
-          className="absolute inset-0 opacity-[0.04] brightness-100 contrast-125 pointer-events-none mix-blend-overlay"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-          }}
-        />
-
-        {/* Animated Blobs */}
-        <div className="about-blob absolute top-[10%] left-[5%] w-[300px] h-[300px] bg-primary/20 blur-[100px] rounded-full" />
-        <div className="about-blob absolute bottom-[10%] right-[10%] w-[400px] h-[400px] bg-primary/10 blur-[120px] rounded-full" />
-        <div className="about-blob absolute top-[40%] right-[30%] w-[250px] h-[250px] bg-accent/15 blur-[90px] rounded-full" />
-
-        {/* Grid pattern overlay (subtle) */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+        <div className="about-blob absolute -top-[10%] -left-[10%] w-[400px] h-[400px] bg-primary/20 blur-[120px] rounded-full" />
+        <div className="about-blob absolute top-[60%] right-[5%] w-[500px] h-[500px] bg-accent/20 blur-[150px] rounded-full" />
+        <div className="about-blob absolute bottom-[20%] left-[20%] w-[300px] h-[300px] bg-secondary/15 blur-[100px] rounded-full" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-        {/* Section heading */}
-        <div className="mb-16 md:mb-20">
-          <h2 className="about-heading opacity-0 translate-y-8 text-3xl md:text-5xl font-bold font-heading text-foreground">
-            About Me
-          </h2>
-          <div className="about-heading opacity-0 translate-y-8 mt-3 h-1 w-16 rounded-full bg-primary" />
-        </div>
+        {/* Main Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          {/* Left — Content Section */}
+          <div className="lg:col-span-7 flex flex-col order-1 lg:order-none justify-center">
+            {/* Header */}
+            <div className="mb-8 md:mb-10">
+              <h2 className="about-heading opacity-0 text-4xl md:text-5xl font-bold font-heading text-foreground tracking-tight">
+                About{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+                  Me
+                </span>
+              </h2>
+              <div className="about-line opacity-0 mt-4 h-1.5 w-20 rounded-full bg-gradient-to-r from-primary to-accent/50" />
+            </div>
 
-        {/* Two-column layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* LEFT — Text Content */}
-          <div className="order-2 lg:order-1">
-            <div className="space-y-5">
-              <p className="about-text opacity-0 translate-y-6 text-base md:text-lg text-muted-foreground leading-relaxed">
-                I&apos;m Youssef Mohammed — a{" "}
-                <span className="text-foreground font-medium">
+            {/* Bio Text */}
+            <div className="space-y-6 mb-12">
+              <p className="about-text-content opacity-0 text-base md:text-lg text-muted-foreground leading-relaxed">
+                I&apos;m Youssef Mohammed, a{" "}
+                <span className="text-foreground font-semibold">
                   Full-Stack MERN Developer
                 </span>{" "}
-                and Computer Science student at{" "}
-                <span className="text-foreground font-medium">
-                  Mansoura University
-                </span>
-                . Over the past 3+ years, I&apos;ve been deeply immersed in
-                building modern, high-performance web applications — from
-                pixel-perfect frontends to scalable backend architectures.
+                and Computer Science student. Relentlessly pursuing
+                pixel-perfect UIs and robust backend architectures, I transform
+                ideas into seamless digital experiences.
               </p>
-              <p className="about-text opacity-0 translate-y-6 text-base md:text-lg text-muted-foreground leading-relaxed">
-                I&apos;m passionate about{" "}
-                <span className="text-foreground font-medium">
-                  clean architecture
+              <p className="about-text-content opacity-0 text-base md:text-lg text-muted-foreground leading-relaxed">
+                Specializing in{" "}
+                <span className="text-foreground font-medium px-2 py-0.5 rounded-md bg-primary/10 dark:bg-primary/40">
+                  React.js
                 </span>
-                , thoughtful UI/UX, and writing code that is both maintainable
-                and performant. My tech stack revolves around{" "}
-                <span className="text-foreground font-medium">
-                  React, Next.js, Node.js, Express, and MongoDB
+                ,{" "}
+                <span className="text-foreground font-medium px-2 py-0.5 rounded-md bg-primary/10 dark:bg-primary/40">
+                  Next.js
                 </span>
-                , with a constant drive to explore new tools and frameworks.
+                , and{" "}
+                <span className="text-foreground font-medium px-2 py-0.5 rounded-md bg-primary/10 dark:bg-primary/40">
+                  Node.js
+                </span>
+                , I write code that doesn&apos;t just work, but scales and
+                performs beautifully.
               </p>
-              <p className="about-text opacity-0 translate-y-6 text-base md:text-lg text-muted-foreground leading-relaxed">
-                Since starting freelancing in{" "}
-                <span className="text-foreground font-medium">2023</span>,
-                I&apos;ve successfully delivered{" "}
-                <span className="text-foreground font-medium">
-                  35+ projects
-                </span>{" "}
-                for clients worldwide, mentored aspiring developers, and led the
-                frontend team at{" "}
-                <span className="text-foreground font-medium">
-                  IEEE Mansoura
-                </span>
-                . I thrive on turning complex problems into elegant, intuitive
-                digital experiences.
+              <p className="about-text-content opacity-0 text-base md:text-lg text-muted-foreground leading-relaxed">
+                Whether I&apos;m mentoring developers or delivering global
+                freelance projects, my commitment to clean architecture remains
+                the same. Let&apos;s build something extraordinary.
               </p>
+            </div>
+
+            {/* Stat Cards - Grid layout */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-7">
+              {stats.map((stat, i) => (
+                <MagneticWrapper key={i}>
+                  <div
+                    className="about-stat-card opacity-0 group relative overflow-hidden p-6 rounded-2xl border border-border bg-card/30 backdrop-blur-sm hover:bg-card/50 transition-colors duration-300 h-full"
+                    data-cursor="hover"
+                  >
+                    <div className="absolute top-5 right-5 sm:right-1 sm:top-1 p-4 opacity-10 transform translate-x-4 -translate-y-4 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-500">
+                      <stat.icon className="w-16 h-16 text-foreground" />
+                    </div>
+                    <div className="relative z-10">
+                      <div className="w-10 h-10 rounded-xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center mb-4 text-primary">
+                        <stat.icon className="w-5 h-5" />
+                      </div>
+                      <h3 className="text-3xl font-bold text-foreground font-heading">
+                        {stat.value}
+                      </h3>
+                      <p className="text-sm text-muted-foreground mt-1 font-medium">
+                        {stat.label}
+                      </p>
+                    </div>
+                  </div>
+                </MagneticWrapper>
+              ))}
             </div>
           </div>
 
-          {/* RIGHT — Profile Image */}
-          <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
-            <div className="about-image opacity-0 translate-y-10 scale-95 relative">
-              <div className="relative w-64 h-72 sm:w-72 sm:h-72 lg:w-96 lg:h-[27rem] rounded-2xl overflow-hidden dark:border border-border">
-                <Image
-                  src="/me.jpg"
-                  alt="Youssef Mohammed — Full-Stack MERN Developer"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 640px) 256px, 288px"
-                  priority
-                />
+          {/* Right — Image Section */}
+          <div className="lg:col-span-5 relative flex justify-center lg:justify-end items-center">
+            <div
+              className="about-image-wrapper opacity-0 relative group"
+              data-cursor="hover"
+            >
+              {/* Main Image Container */}
+              <div className="relative w-72 h-[22rem] sm:w-80 sm:h-[26rem] lg:w-[27rem] lg:h-[38rem] rounded-[2rem] overflow-hidden border border-border bg-muted/20 backdrop-blur-sm p-4">
+                <div className="relative w-full h-full rounded-[1.5rem] overflow-hidden">
+                  <div className="absolute inset-0 bg-primary/10 mix-blend-overlay z-10 group-hover:bg-transparent transition-colors duration-500" />
+                  <Image
+                    src="/me.jpg"
+                    alt="Youssef Mohammed"
+                    fill
+                    className="object-cover scale-105 group-hover:scale-100 transition-transform duration-700 ease-out"
+                    sizes="(max-width: 640px) 288px, 384px"
+                    priority
+                  />
+                </div>
               </div>
             </div>
           </div>

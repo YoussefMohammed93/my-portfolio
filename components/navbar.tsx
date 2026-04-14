@@ -4,10 +4,17 @@ import Link from "next/link";
 import Image from "next/image";
 
 import * as React from "react";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { useTheme } from "next-themes";
 import { useLenis } from "lenis/react";
 import { Button } from "@/components/ui/button";
-import { Menu, Moon, Sun, X } from "lucide-react";
+import { Menu, Moon, Sun } from "lucide-react";
+import { MagneticWrapper } from "@/components/ui/magnetic-wrapper";
 
 const navLinks = [
   { name: "About", href: "#about" },
@@ -27,7 +34,6 @@ export function Navbar() {
     setMounted(true);
   }, []);
 
-  const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
 
   const handleScroll = (href: string) => {
@@ -39,51 +45,60 @@ export function Navbar() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-secondary/50 dark:bg-muted/40 backdrop-blur-sm border-b border-border/40">
       <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
         <div className="flex h-16 items-center justify-between">
-          <Link
-            href="/"
-            className="flex items-end gap-1 hover:opacity-80 transition-opacity"
-            onClick={closeMenu}
-          >
-            <Image
-              src="/logo.png"
-              alt="Youssef Mohammed"
-              width={48}
-              height={48}
-              className="size-12 rounded-lg overflow-hidden object-cover"
-            />
-            <span className="text-xl font-bold font-montserrat tracking-tight pb-1.5">
-              YM
-            </span>
-          </Link>
+          <MagneticWrapper>
+            <Link
+              href="/"
+              className="flex items-end gap-1 hover:opacity-90 transition-opacity"
+              onClick={closeMenu}
+              data-cursor="logo"
+            >
+              <Image
+                src="/logo.png"
+                alt="Youssef Mohammed"
+                width={48}
+                height={48}
+                className="size-12 rounded-lg overflow-hidden object-cover"
+              />
+              <span className="text-2xl font-bold font-montserrat tracking-tight pb-1 pt-2">
+                YM
+              </span>
+            </Link>
+          </MagneticWrapper>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
             <ul className="flex items-center gap-6 text-sm font-medium">
               {navLinks.map((link) => (
                 <li key={link.name}>
-                  <button
-                    onClick={() => handleScroll(link.href)}
-                    className="text-muted-foreground hover:text-primary transition-colors cursor-pointer"
-                  >
-                    {link.name}
-                  </button>
+                  <MagneticWrapper>
+                    <button
+                      onClick={() => handleScroll(link.href)}
+                      className="text-muted-foreground hover:text-primary transition-colors cursor-pointer py-1 px-2"
+                      data-cursor="link"
+                    >
+                      {link.name}
+                    </button>
+                  </MagneticWrapper>
                 </li>
               ))}
             </ul>
 
             <div className="flex items-center ml-4 border-l border-border/40 pl-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Toggle theme"
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              >
-                {mounted && theme === "dark" ? (
-                  <Sun className="h-5 w-5" />
-                ) : (
-                  <Moon className="h-5 w-5" />
-                )}
-              </Button>
+              <MagneticWrapper>
+                <Button
+                  size="icon"
+                  className="bg-transparent text-foreground hover:bg-primary/15 rounded-full hover:text-primary"
+                  aria-label="Toggle theme"
+                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                  data-cursor="hover"
+                >
+                  {mounted && theme === "dark" ? (
+                    <Sun className="h-5 w-5" />
+                  ) : (
+                    <Moon className="h-5 w-5" />
+                  )}
+                </Button>
+              </MagneticWrapper>
             </div>
           </nav>
 
@@ -91,7 +106,7 @@ export function Navbar() {
           <div className="flex items-center gap-2 md:hidden">
             <Button
               variant="ghost"
-              size="icon"
+              className="size-10! hover:bg-accent! hover:text-accent-foreground transition-colors"
               aria-label="Toggle theme"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             >
@@ -101,38 +116,40 @@ export function Navbar() {
                 <Moon className="h-5 w-5" />
               )}
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Toggle Menu"
-              onClick={toggleMenu}
-            >
-              {isOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
+
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTrigger
+                className="inline-flex items-center justify-center rounded-md h-10 w-10 hover:bg-accent hover:text-accent-foreground transition-colors group"
+                data-cursor="hover"
+              >
                 <Menu className="h-6 w-6" />
-              )}
-            </Button>
+                <span className="sr-only">Toggle Menu</span>
+              </SheetTrigger>
+              <SheetContent
+                showCloseButton={false}
+                side="left"
+                className="w-[85vw] sm:w-[400px] border-l border-border/20 bg-muted/80 backdrop-blur-2xl p-6 sm:p-8 shadow-2xl flex flex-col"
+              >
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                <div className="flex flex-col gap-2 mt-8 flex-1">
+                  {navLinks.map((link) => (
+                    <button
+                      key={link.name}
+                      onClick={() => handleScroll(link.href)}
+                      className="group flex items-center justify-between w-full text-left rounded-xl px-4 py-4 text-xl font-semibold text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all duration-300 cursor-pointer"
+                    >
+                      <span>{link.name}</span>
+                      <span className="opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-primary">
+                        &rarr;
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </div>
-
-      {/* Mobile Navigation */}
-      {isOpen && (
-        <div className="md:hidden border-t border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="space-y-1 px-4 pb-3 pt-2">
-            {navLinks.map((link) => (
-              <button
-                key={link.name}
-                onClick={() => handleScroll(link.href)}
-                className="block w-full text-left rounded-md px-3 py-2 text-base font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
-              >
-                {link.name}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
     </header>
   );
 }
