@@ -270,11 +270,7 @@ export function Projects() {
   );
 
   return (
-    <section
-      id="projects"
-      ref={container}
-      className="relative bg-background overflow-hidden"
-    >
+    <section id="projects" ref={container} className="relative bg-background">
       {/* Background blobs */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute top-[20%] right-[5%] w-[400px] h-[400px] bg-primary/15 dark:bg-primary/30 blur-[120px] rounded-full" />
@@ -297,7 +293,7 @@ export function Projects() {
       </div>
 
       {/* ═══ Desktop: Horizontal Scroll Showcase ═══ */}
-      <div className="projects-pin-wrapper hidden lg:block relative z-10 h-screen">
+      <div className="projects-pin-wrapper hidden lg:block relative z-10 h-screen overflow-hidden">
         {/* Bottom controls: slide counter + progress bar */}
         <div className="projects-controls opacity-0 absolute bottom-10 left-1/2 -translate-x-1/2 z-50 flex items-center gap-6">
           <span className="text-sm font-heading text-muted-foreground select-none">
