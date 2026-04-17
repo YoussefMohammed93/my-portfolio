@@ -19,7 +19,7 @@ interface Project {
   tags: string[];
   stack: string[];
   description: string;
-  github: string;
+  github?: string;
   demo: string;
   image: string;
   featured?: boolean;
@@ -42,6 +42,26 @@ const projects: Project[] = [
     github: "https://github.com/YoussefMohammed93/V-QUIZ",
     demo: "https://v-quiz-demo.vercel.app",
     image: "/v-quiz.png",
+    featured: true,
+  },
+  {
+    name: "Tasawoq - E-Commerce",
+    tags: ["Fullstack", "E-Commerce"],
+    stack: [
+      "Next.js 15",
+      "React 19",
+      "TypeScript",
+      "Tailwind v4",
+      "Convex",
+      "Clerk",
+      "Stripe",
+      "dnd-kit",
+      "Leaflet",
+    ],
+    description:
+      "Tasawoq is a full-featured e-commerce web application with product filtering, a shopping cart, Stripe-powered checkout, PDF invoice generation, interactive delivery maps, and a drag-and-drop admin dashboard.",
+    demo: "https://tasawoq.netlify.app",
+    image: "/tasawoq.png",
     featured: true,
   },
   {
@@ -403,22 +423,24 @@ export function Projects() {
                         </span>
                       </Button>
                     </a>
-                    <a
-                      href={project.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Button
-                        variant="outline"
-                        className="rounded-full font-medium cursor-pointer"
-                        data-cursor="hover"
+                    {project.github && (
+                      <a
+                        href={project.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
                       >
-                        <span className="flex items-center gap-2 px-3">
-                          <span>Source Code</span>
-                          <FaGithub className="size-4" />
-                        </span>
-                      </Button>
-                    </a>
+                        <Button
+                          variant="outline"
+                          className="rounded-full font-medium cursor-pointer"
+                          data-cursor="hover"
+                        >
+                          <span className="flex items-center gap-2 px-3">
+                            <span>Source Code</span>
+                            <FaGithub className="size-4" />
+                          </span>
+                        </Button>
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>
@@ -512,23 +534,25 @@ export function Projects() {
                     </span>
                   </Button>
                 </a>
-                <a
-                  href={project.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1"
-                >
-                  <Button
-                    variant="outline"
-                    className="w-full rounded-full font-medium cursor-pointer text-sm"
-                    size="sm"
+                {project.github && (
+                  <a
+                    href={project.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1"
                   >
-                    <span className="flex items-center gap-1.5">
-                      <span>Source Code</span>
-                      <FaGithub className="size-3.5" />
-                    </span>
-                  </Button>
-                </a>
+                    <Button
+                      variant="outline"
+                      className="w-full rounded-full font-medium cursor-pointer text-sm"
+                      size="sm"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <span>Source Code</span>
+                        <FaGithub className="size-3.5" />
+                      </span>
+                    </Button>
+                  </a>
+                )}
               </div>
             </div>
           </div>
