@@ -148,7 +148,7 @@ const row3: Skill[] = [
 function SkillCard({ skill }: { skill: Skill }) {
   return (
     <div
-      className="flex-shrink-0 flex items-center gap-3 bg-card border border-border rounded-xl px-5 py-3 select-none"
+      className="flex-shrink-0 flex items-center gap-3 bg-secondary/50 dark:bg-muted/50 border border-border rounded-xl px-5 py-3 select-none"
       data-cursor="hover"
     >
       <img

@@ -11,18 +11,19 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useGSAP } from "@gsap/react";
 import { useTheme } from "next-themes";
 import { useLenis } from "lenis/react";
 import { Menu, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLoading } from "@/components/loading-context";
+import { ResumeButton } from "@/components/ui/resume-button";
 import { MagneticWrapper } from "@/components/ui/magnetic-wrapper";
-
-import { useGSAP } from "@gsap/react";
 
 const navLinks = [
   { name: "About", href: "#about" },
   { name: "Skills", href: "#skills" },
+  { name: "Services", href: "#services" },
   { name: "Projects", href: "#projects" },
   { name: "Experience", href: "#experience" },
   { name: "Contact", href: "#contact" },
@@ -45,27 +46,28 @@ export function Navbar() {
       if (!isLoaded) return;
 
       const tl = gsap.timeline({
-        defaults: { ease: "power3.out", duration: 1.5 },
+        defaults: { ease: "power3.out", duration: 0.75 },
       });
 
       tl.fromTo(
         [".nav-logo", ".nav-action"],
-        { y: -20, opacity: 0 },
+        { y: -50, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          stagger: 0.1,
-          delay: 0.6,
+          stagger: 0.01,
+          delay: 0.4,
         },
       ).fromTo(
         ".nav-link",
-        { y: -20, opacity: 0 },
+        { y: -50, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          stagger: 0.1,
+          stagger: 0.01,
+          delay: 0.4,
         },
-        "-=1.1",
+        "-=0.6",
       );
     },
     { scope: container, dependencies: [isLoaded] },
@@ -84,29 +86,32 @@ export function Navbar() {
       className="fixed top-0 left-0 right-0 z-50 bg-secondary/50 dark:bg-muted/40 backdrop-blur-sm border-b border-border/40"
     >
       <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
-        <div className="flex h-16 items-center justify-between">
-          <MagneticWrapper>
-            <Link
-              href="/"
-              className="nav-logo opacity-0 flex items-end gap-1 hover:opacity-90 transition-opacity"
-              onClick={closeMenu}
-              data-cursor="logo"
-            >
-              <Image
-                src="/logo.png"
-                alt="Youssef Mohammed"
-                width={48}
-                height={48}
-                className="size-12 rounded-lg overflow-hidden object-cover"
-              />
-              <span className="text-2xl font-bold font-montserrat tracking-tight pb-1 pt-2">
-                YM
-              </span>
-            </Link>
-          </MagneticWrapper>
+        <div className="flex h-16 items-center justify-between relative">
+          {/* 1. Logo (Left) */}
+          <div className="flex-shrink-0">
+            <MagneticWrapper>
+              <Link
+                href="/"
+                className="nav-logo opacity-0 flex items-end gap-1 hover:opacity-90 transition-opacity"
+                onClick={closeMenu}
+                data-cursor="logo"
+              >
+                <Image
+                  src="/logo.png"
+                  alt="Youssef Mohammed"
+                  width={48}
+                  height={48}
+                  className="size-12 rounded-lg overflow-hidden object-cover"
+                />
+                <span className="text-2xl font-bold font-montserrat tracking-tight pb-1 pt-2">
+                  YM
+                </span>
+              </Link>
+            </MagneticWrapper>
+          </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-6">
+          {/* 2. Desktop Navigation (Center) */}
+          <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center">
             <ul className="flex items-center gap-6 text-sm font-medium">
               {navLinks.map((link) => (
                 <li key={link.name}>
@@ -122,27 +127,30 @@ export function Navbar() {
                 </li>
               ))}
             </ul>
-
-            <div className="flex items-center ml-4 border-l border-border/40 pl-4">
-              <MagneticWrapper>
-                <Button
-                  size="icon"
-                  className="nav-action opacity-0 bg-transparent text-foreground hover:bg-primary/15 rounded-full hover:text-primary"
-                  aria-label="Toggle theme"
-                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                  data-cursor="hover"
-                >
-                  {mounted && theme === "dark" ? (
-                    <Sun className="h-5 w-5" />
-                  ) : (
-                    <Moon className="h-5 w-5" />
-                  )}
-                </Button>
-              </MagneticWrapper>
-            </div>
           </nav>
 
-          {/* Mobile Menu Toggle */}
+          {/* 3. Actions (Right) */}
+          <div className="hidden md:flex items-center gap-4">
+            <ResumeButton />
+
+            <div className="border-l border-border/40 pl-4">
+              <Button
+                size="icon"
+                className="nav-action opacity-0 bg-transparent text-foreground hover:bg-primary/15 rounded-full hover:text-primary"
+                aria-label="Toggle theme"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                data-cursor="hover"
+              >
+                {mounted && theme === "dark" ? (
+                  <Sun className="h-5 w-5" />
+                ) : (
+                  <Moon className="h-5 w-5" />
+                )}
+              </Button>
+            </div>
+          </div>
+
+          {/* Mobile Menu Toggle & Actions */}
           <div className="flex items-center gap-2 md:hidden">
             <Button
               variant="ghost"
@@ -184,6 +192,10 @@ export function Navbar() {
                       </span>
                     </button>
                   ))}
+                </div>
+
+                <div className="mt-auto pt-6">
+                  <ResumeButton mobile />
                 </div>
               </SheetContent>
             </Sheet>
