@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Eye, Mail, ArrowDown } from "lucide-react";
 import { NodeSnapshot } from "@/components/node-snapshot";
+import { useLoading } from "@/components/loading-context";
 import { ReactSnapshot } from "@/components/react-snapshot";
 
 gsap.registerPlugin(useGSAP, SplitText);
@@ -18,6 +19,7 @@ gsap.registerPlugin(useGSAP, SplitText);
 export function Hero() {
   const container = useRef<HTMLDivElement>(null);
   const lenis = useLenis();
+  const { isLoaded } = useLoading();
 
   const scrollToAbout = () => {
     lenis?.scrollTo("#about");
@@ -25,6 +27,8 @@ export function Hero() {
 
   useGSAP(
     () => {
+      if (!isLoaded) return;
+
       // Split the heading into characters with a clip-mask for reveal
       const split = SplitText.create(".hero-heading", {
         type: "chars",
@@ -63,7 +67,7 @@ export function Hero() {
         delay: 0.5,
       });
     },
-    { scope: container },
+    { scope: container, dependencies: [isLoaded] },
   );
 
   return (

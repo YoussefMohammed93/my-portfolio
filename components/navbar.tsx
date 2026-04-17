@@ -1,5 +1,6 @@
 "use client";
 
+import gsap from "gsap";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -12,9 +13,12 @@ import {
 } from "@/components/ui/sheet";
 import { useTheme } from "next-themes";
 import { useLenis } from "lenis/react";
-import { Button } from "@/components/ui/button";
 import { Menu, Moon, Sun } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useLoading } from "@/components/loading-context";
 import { MagneticWrapper } from "@/components/ui/magnetic-wrapper";
+
+import { useGSAP } from "@gsap/react";
 
 const navLinks = [
   { name: "About", href: "#about" },
@@ -29,10 +33,43 @@ export function Navbar() {
   const [mounted, setMounted] = React.useState(false);
   const { theme, setTheme } = useTheme();
   const lenis = useLenis();
+  const { isLoaded } = useLoading();
+  const container = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     setMounted(true);
   }, []);
+
+  useGSAP(
+    () => {
+      if (!isLoaded) return;
+
+      const tl = gsap.timeline({
+        defaults: { ease: "power3.out", duration: 1.5 },
+      });
+
+      tl.fromTo(
+        [".nav-logo", ".nav-action"],
+        { y: -20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          stagger: 0.1,
+          delay: 0.6,
+        },
+      ).fromTo(
+        ".nav-link",
+        { y: -20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          stagger: 0.1,
+        },
+        "-=1.1",
+      );
+    },
+    { scope: container, dependencies: [isLoaded] },
+  );
 
   const closeMenu = () => setIsOpen(false);
 
@@ -42,13 +79,16 @@ export function Navbar() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-secondary/50 dark:bg-muted/40 backdrop-blur-sm border-b border-border/40">
+    <header
+      ref={container}
+      className="fixed top-0 left-0 right-0 z-50 bg-secondary/50 dark:bg-muted/40 backdrop-blur-sm border-b border-border/40"
+    >
       <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
         <div className="flex h-16 items-center justify-between">
           <MagneticWrapper>
             <Link
               href="/"
-              className="flex items-end gap-1 hover:opacity-90 transition-opacity"
+              className="nav-logo opacity-0 flex items-end gap-1 hover:opacity-90 transition-opacity"
               onClick={closeMenu}
               data-cursor="logo"
             >
@@ -73,7 +113,7 @@ export function Navbar() {
                   <MagneticWrapper>
                     <button
                       onClick={() => handleScroll(link.href)}
-                      className="text-muted-foreground hover:text-primary transition-colors cursor-pointer py-1 px-2"
+                      className="nav-link opacity-0 text-muted-foreground hover:text-primary transition-colors cursor-pointer py-1 px-2"
                       data-cursor="link"
                     >
                       {link.name}
@@ -87,7 +127,7 @@ export function Navbar() {
               <MagneticWrapper>
                 <Button
                   size="icon"
-                  className="bg-transparent text-foreground hover:bg-primary/15 rounded-full hover:text-primary"
+                  className="nav-action opacity-0 bg-transparent text-foreground hover:bg-primary/15 rounded-full hover:text-primary"
                   aria-label="Toggle theme"
                   onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                   data-cursor="hover"
@@ -106,7 +146,7 @@ export function Navbar() {
           <div className="flex items-center gap-2 md:hidden">
             <Button
               variant="ghost"
-              className="size-10! hover:bg-accent! hover:text-accent-foreground transition-colors"
+              className="nav-action opacity-0 size-10! hover:bg-accent! hover:text-accent-foreground transition-colors"
               aria-label="Toggle theme"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             >
@@ -119,7 +159,7 @@ export function Navbar() {
 
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger
-                className="inline-flex items-center justify-center rounded-md h-10 w-10 hover:bg-accent hover:text-accent-foreground transition-colors group"
+                className="nav-action opacity-0 inline-flex items-center justify-center rounded-md h-10 w-10 hover:bg-accent hover:text-accent-foreground transition-colors group"
                 data-cursor="hover"
               >
                 <Menu className="h-6 w-6" />

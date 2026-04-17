@@ -5,9 +5,11 @@ import type { Metadata } from "next";
 import { cn } from "@/lib/utils";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { Preloader } from "@/components/ui/preloader";
 import { ThemeProvider } from "@/components/theme-provider";
 import { LenisProvider } from "@/components/lenis-provider";
 import { CustomCursor } from "@/components/ui/custom-cursor";
+import { LoadingProvider } from "@/components/loading-context";
 import { IBM_Plex_Sans, Montserrat, Space_Grotesk } from "next/font/google";
 
 const spaceGrotesk = Space_Grotesk({
@@ -70,19 +72,22 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-sans">
-        <CustomCursor />
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <LenisProvider>
-            <Navbar />
-            <main className="flex-1 w-full pt-16">{children}</main>
-            <Footer />
-          </LenisProvider>
-        </ThemeProvider>
+        <LoadingProvider>
+          <Preloader />
+          <CustomCursor />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <LenisProvider>
+              <Navbar />
+              <main className="flex-1 w-full pt-16">{children}</main>
+              <Footer />
+            </LenisProvider>
+          </ThemeProvider>
+        </LoadingProvider>
       </body>
     </html>
   );
