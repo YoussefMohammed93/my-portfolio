@@ -196,69 +196,83 @@ export function Skills() {
 
   useGSAP(
     () => {
-      /* ── Heading reveal ── */
-      const headingTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: container.current,
-          start: "top 80%",
-          toggleActions: "play none none none",
-        },
-        defaults: { ease: "power3.out" },
-      });
+      const mm = gsap.matchMedia();
 
-      headingTl
-        .to(".skills-heading", {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-        })
-        .to(
-          ".skills-bar",
-          {
-            y: 0,
+      mm.add(
+        {
+          reduceMotion: "(prefers-reduced-motion: reduce)",
+          noPreference: "(prefers-reduced-motion: no-preference)",
+        },
+        (context) => {
+          const { reduceMotion } = context.conditions as {
+            reduceMotion: boolean;
+          };
+
+          /* ── Heading reveal ── */
+          const headingTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: container.current,
+              start: "top 80%",
+              toggleActions: "play none none none",
+            },
+            defaults: { ease: "power3.out" },
+          });
+
+          headingTl
+            .to(".skills-heading", {
+              y: 0,
+              opacity: 1,
+              duration: 0.8,
+            })
+            .to(
+              ".skills-bar",
+              {
+                y: 0,
+                opacity: 1,
+                duration: 0.8,
+              },
+              "-=0.4",
+            );
+
+          /* ── Marquee rows fade in ── */
+          gsap.to(".marquee-row", {
             opacity: 1,
+            y: 0,
             duration: 0.8,
-          },
-          "-=0.4",
-        );
+            stagger: reduceMotion ? 0.05 : 0.15,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: container.current,
+              start: "top 75%",
+              toggleActions: "play none none none",
+            },
+          });
 
-      /* ── Marquee rows fade in ── */
-      gsap.to(".marquee-row", {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: container.current,
-          start: "top 75%",
-          toggleActions: "play none none none",
+          /* ── Infinite marquee scrolls ── */
+          if (!reduceMotion) {
+            const tracks =
+              container.current?.querySelectorAll(".marquee-track");
+            if (!tracks) return;
+
+            tracks.forEach((track, i) => {
+              const el = track as HTMLElement;
+              const halfWidth = el.scrollWidth / 2;
+              const durations = [30, 45, 30];
+
+              gsap.fromTo(
+                el,
+                { x: 0 },
+                {
+                  x: -halfWidth,
+                  duration: durations[i],
+                  ease: "none",
+                  repeat: -1,
+                },
+              );
+            });
+          }
         },
-      });
-
-      /* ── GSAP-powered infinite marquee scrolls ── */
-      const tracks = container.current?.querySelectorAll(".marquee-track");
-      if (!tracks) return;
-
-      tracks.forEach((track, i) => {
-        const el = track as HTMLElement;
-        // Get the width of the first half (original items)
-        const halfWidth = el.scrollWidth / 2;
-
-        // Different durations for depth effect: Row 2 is slower
-        const durations = [30, 45, 30];
-
-        gsap.fromTo(
-          el,
-          { x: 0 },
-          {
-            x: -halfWidth,
-            duration: durations[i],
-            ease: "none",
-            repeat: -1,
-          },
-        );
-      });
+      );
     },
     { scope: container },
   );

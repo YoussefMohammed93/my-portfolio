@@ -60,30 +60,44 @@ export function Services() {
 
   useGSAP(
     () => {
-      // Entrance animation for the title
-      gsap.from(".services-title", {
-        y: 30,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ".services-title",
-          start: "top 85%",
-        },
-      });
+      const mm = gsap.matchMedia();
 
-      // Staggered entrance for cards
-      gsap.from(".service-card", {
-        y: 50,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: ".services-grid",
-          start: "top 80%",
+      mm.add(
+        {
+          reduceMotion: "(prefers-reduced-motion: reduce)",
+          noPreference: "(prefers-reduced-motion: no-preference)",
         },
-      });
+        (context) => {
+          const { reduceMotion } = context.conditions as {
+            reduceMotion: boolean;
+          };
+
+          // Entrance animation for the title
+          gsap.from(".services-title", {
+            y: reduceMotion ? 0 : 30,
+            opacity: 0,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: ".services-title",
+              start: "top 85%",
+            },
+          });
+
+          // Staggered entrance for cards
+          gsap.from(".service-card", {
+            y: reduceMotion ? 0 : 50,
+            opacity: 0,
+            duration: 0.8,
+            stagger: reduceMotion ? 0.05 : 0.15,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: ".services-grid",
+              start: "top 80%",
+            },
+          });
+        },
+      );
     },
     { scope: containerRef },
   );

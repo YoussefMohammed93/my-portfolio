@@ -11,10 +11,12 @@ export function CustomCursor() {
 
   useEffect(() => {
     // Only initialize GSAP properties if the device has a mouse/fine pointer
+    // AND the user doesn't prefer reduced motion
     if (
       typeof window === "undefined" ||
       !window.matchMedia ||
-      !window.matchMedia("(pointer: fine)").matches
+      !window.matchMedia("(pointer: fine)").matches ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ) {
       return;
     }
@@ -138,12 +140,12 @@ export function CustomCursor() {
       <style
         dangerouslySetInnerHTML={{
           __html: `
-        @media (pointer: fine) {
+        @media (pointer: fine) and (prefers-reduced-motion: no-preference) {
           * {
             cursor: none !important;
           }
         }
-        @media (pointer: coarse), (hover: none) {
+        @media (pointer: coarse), (hover: none), (prefers-reduced-motion: reduce) {
           .custom-cursor, .custom-cursor-dot {
             display: none !important;
           }

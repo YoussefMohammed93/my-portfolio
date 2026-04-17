@@ -2,7 +2,7 @@
 
 import gsap from "gsap";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { useGSAP } from "@gsap/react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,14 +10,45 @@ import { Button } from "@/components/ui/button";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Textarea } from "@/components/ui/textarea";
 import { FaLinkedin, FaGithub } from "react-icons/fa";
-import { useForm, ValidationError } from "@formspree/react";
+import { useForm as useFormspree, ValidationError } from "@formspree/react";
 import { Mail, MapPin, Send, MessageSquare } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
+const contactSchema = z.object({
+  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+  email: z.string().email({ message: "Please enter a valid email address" }),
+  message: z.string().min(10, { message: "Message must be at least 10 characters" }),
+});
+
+type ContactFormValues = z.infer<typeof contactSchema>;
+
 export function Contact() {
   const container = useRef<HTMLDivElement>(null);
-  const [state, handleSubmit] = useForm("xjgjgodg");
+  const [serverState, handleServerSubmit] = useFormspree("xjgjgodg");
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<ContactFormValues>({
+    resolver: zodResolver(contactSchema),
+  });
+
+  // Reset form after successful submission
+  useEffect(() => {
+    if (serverState.succeeded) {
+      reset();
+    }
+  }, [serverState.succeeded, reset]);
+
+  const onSubmit = async (data: ContactFormValues) => {
+    await handleServerSubmit(data);
+  };
 
   useGSAP(
     () => {
@@ -38,9 +69,13 @@ export function Contact() {
         {
           isMobile: "(max-width: 767px)",
           isDesktop: "(min-width: 768px)",
+          reduceMotion: "(prefers-reduced-motion: reduce)",
         },
         (context) => {
-          const { isMobile } = context.conditions as { isMobile: boolean };
+          const { isMobile, reduceMotion } = context.conditions as {
+            isMobile: boolean;
+            reduceMotion: boolean;
+          };
 
           /* ── ScrollReveal Sequence ── */
           const tl = gsap.timeline({
@@ -55,7 +90,7 @@ export function Contact() {
           tl.set(".contact-content-wrapper", { visibility: "visible" })
             .fromTo(
               ".contact-heading",
-              { y: 50, autoAlpha: 0 },
+              { y: reduceMotion ? 0 : 50, autoAlpha: 0 },
               { y: 0, autoAlpha: 1, duration: 0.8 },
             )
             .fromTo(
@@ -66,19 +101,23 @@ export function Contact() {
             )
             .fromTo(
               ".contact-text",
-              { y: 20, autoAlpha: 0 },
+              { y: reduceMotion ? 0 : 20, autoAlpha: 0 },
               { y: 0, autoAlpha: 1, duration: 0.6 },
               "-=0.4",
             )
             .fromTo(
               ".contact-info-item",
-              { x: isMobile ? 0 : -30, y: isMobile ? 20 : 0, autoAlpha: 0 },
+              {
+                x: reduceMotion || isMobile ? 0 : -30,
+                y: reduceMotion ? 0 : isMobile ? 20 : 0,
+                autoAlpha: 0,
+              },
               {
                 x: 0,
                 y: 0,
                 autoAlpha: 1,
                 duration: 0.6,
-                stagger: 0.1,
+                stagger: reduceMotion ? 0.05 : 0.1,
                 ease: "back.out(1.5)",
               },
               "-=0.4",
@@ -86,22 +125,22 @@ export function Contact() {
             .fromTo(
               ".contact-form-container",
               {
-                x: isMobile ? 0 : 30,
-                y: isMobile ? 30 : 0,
+                x: reduceMotion || isMobile ? 0 : 30,
+                y: reduceMotion ? 0 : isMobile ? 30 : 0,
                 autoAlpha: 0,
-                scale: 0.98,
+                scale: reduceMotion ? 1 : 0.98,
               },
               { x: 0, y: 0, autoAlpha: 1, scale: 1, duration: 0.8 },
               "-=0.6",
             )
             .fromTo(
               ".contact-form-item",
-              { y: 20, autoAlpha: 0 },
+              { y: reduceMotion ? 0 : 20, autoAlpha: 0 },
               {
                 y: 0,
                 autoAlpha: 1,
                 duration: 0.4,
-                stagger: 0.1,
+                stagger: reduceMotion ? 0.05 : 0.1,
                 ease: "power2.out",
               },
               "-=0.5",
@@ -222,7 +261,7 @@ export function Contact() {
 
           {/* Right Column - Form */}
           <div className="contact-form-container bg-card/40 backdrop-blur-sm border border-border rounded-2xl p-6 md:p-8 shadow-lg shadow-primary/5 relative overflow-hidden">
-            {state.succeeded ? (
+            {serverState.succeeded ? (
               <div className="flex flex-col items-center justify-center text-center h-full space-y-4 min-h-[300px] animate-in fade-in zoom-in duration-500">
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-2 text-primary">
                   <MessageSquare className="w-8 h-8" />
@@ -243,55 +282,76 @@ export function Contact() {
                 </Button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="contact-form-item space-y-2">
-                  <Label htmlFor="name">Name</Label>
+                  <Label htmlFor="name" className={errors.name ? "text-destructive" : ""}>Name</Label>
                   <Input
                     id="name"
-                    name="name"
+                    {...register("name")}
                     placeholder="John Doe"
-                    required
-                    className="bg-background/50 border-border/50 focus-visible:ring-primary/20 dark:focus-visible:ring-primary/50 transition-all focus:border-transparent! rounded-xl"
+                    readOnly={serverState.submitting}
+                    className={`bg-background/50 border-border/50 focus-visible:ring-primary/20 dark:focus-visible:ring-primary/50 transition-all focus:border-transparent! rounded-xl ${
+                      errors.name ? "border-destructive/50 ring-1 ring-destructive/20" : ""
+                    }`}
                   />
+                  {errors.name && (
+                    <p className="text-destructive text-sm mt-1 animate-in slide-in-from-top-1 duration-200">
+                      {errors.name.message}
+                    </p>
+                  )}
                   <ValidationError
                     prefix="Name"
                     field="name"
-                    errors={state.errors}
+                    errors={serverState.errors}
                     className="text-destructive text-sm"
                   />
                 </div>
 
                 <div className="contact-form-item space-y-2">
-                  <Label htmlFor="email">Email Address</Label>
+                  <Label htmlFor="email" className={errors.email ? "text-destructive" : ""}>Email Address</Label>
                   <Input
                     id="email"
                     type="email"
-                    name="email"
+                    {...register("email")}
                     placeholder="john@example.com"
-                    required
-                    className="bg-background/50 border-border/50 focus-visible:ring-primary/20 dark:focus-visible:ring-primary/50 transition-all focus:border-transparent! transition-all rounded-xl"
+                    readOnly={serverState.submitting}
+                    className={`bg-background/50 border-border/50 focus-visible:ring-primary/20 dark:focus-visible:ring-primary/50 transition-all focus:border-transparent! transition-all rounded-xl ${
+                      errors.email ? "border-destructive/50 ring-1 ring-destructive/20" : ""
+                    }`}
                   />
+                  {errors.email && (
+                    <p className="text-destructive text-sm mt-1 animate-in slide-in-from-top-1 duration-200">
+                      {errors.email.message}
+                    </p>
+                  )}
                   <ValidationError
                     prefix="Email"
                     field="email"
-                    errors={state.errors}
+                    errors={serverState.errors}
                     className="text-destructive text-sm"
                   />
                 </div>
 
                 <div className="contact-form-item space-y-2">
-                  <Label htmlFor="message">Message</Label>
+                  <Label htmlFor="message" className={errors.message ? "text-destructive" : ""}>Message</Label>
                   <Textarea
                     id="message"
-                    name="message"
+                    {...register("message")}
                     placeholder="Tell me about your project..."
-                    className="min-h-[150px] bg-background/50 resize-none border-border/50 focus-visible:ring-primary/20 dark:focus-visible:ring-primary/50 transition-all focus:border-transparent! transition-all rounded-xl"
-                    required
+                    readOnly={serverState.submitting}
+                    className={`min-h-[150px] bg-background/50 resize-none border-border/50 focus-visible:ring-primary/20 dark:focus-visible:ring-primary/50 transition-all focus:border-transparent! transition-all rounded-xl ${
+                      errors.message ? "border-destructive/50 ring-1 ring-destructive/20" : ""
+                    }`}
                   />
+                  {errors.message && (
+                    <p className="text-destructive text-sm mt-1 animate-in slide-in-from-top-1 duration-200">
+                      {errors.message.message}
+                    </p>
+                  )}
                   <ValidationError
                     prefix="Message"
                     field="message"
-                    errors={state.errors}
+                    errors={serverState.errors}
                     className="text-destructive text-sm"
                   />
                 </div>
@@ -299,19 +359,19 @@ export function Contact() {
                 <div className="contact-form-item">
                   <Button
                     type="submit"
-                    disabled={state.submitting}
+                    disabled={serverState.submitting}
                     className="w-full gap-2 font-medium rounded-xl h-11 transition-all group overflow-hidden relative"
                     size="lg"
                   >
                     <span className="relative z-10 flex items-center justify-center gap-2">
-                      {state.submitting ? "Sending Message..." : "Send Message"}
-                      {!state.submitting && <Send className="size-4" />}
+                      {serverState.submitting ? "Sending Message..." : "Send Message"}
+                      {!serverState.submitting && <Send className="size-4" />}
                     </span>
                     <div className="absolute inset-0 bg-primary-foreground/10 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
                   </Button>
                 </div>
 
-                {state.errors && (
+                {serverState.errors && (
                   <div className="contact-form-item p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm font-medium mt-4 text-center">
                     Something went wrong, please check your details and try
                     again.

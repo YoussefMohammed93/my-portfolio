@@ -13,98 +13,7 @@ import { ExternalLink, Sparkles } from "lucide-react";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
-/* ─── Project Data ─── */
-interface Project {
-  name: string;
-  tags: string[];
-  stack: string[];
-  description: string;
-  github?: string;
-  demo: string;
-  image: string;
-  featured?: boolean;
-}
-
-const projects: Project[] = [
-  {
-    name: "V-Quiz",
-    tags: ["Fullstack", "AI", "EdTech"],
-    stack: [
-      "Next.js",
-      "TypeScript",
-      "Convex",
-      "Clerk",
-      "Gemini AI",
-      "Tailwind CSS",
-    ],
-    description:
-      "AI-powered learning platform that transforms any topic into chat-native quizzes, flashcards, and study sessions instantly using Google Gemini.",
-    github: "https://github.com/YoussefMohammed93/V-QUIZ",
-    demo: "https://v-quiz-demo.vercel.app",
-    image: "/v-quiz.png",
-    featured: true,
-  },
-  {
-    name: "Tasawoq - E-Commerce",
-    tags: ["Fullstack", "E-Commerce"],
-    stack: [
-      "Next.js 15",
-      "React 19",
-      "TypeScript",
-      "Tailwind v4",
-      "Convex",
-      "Clerk",
-      "Stripe",
-      "dnd-kit",
-      "Leaflet",
-    ],
-    description:
-      "Tasawoq is a full-featured e-commerce web application with product filtering, a shopping cart, Stripe-powered checkout, PDF invoice generation, interactive delivery maps, and a drag-and-drop admin dashboard.",
-    demo: "https://tasawoq.netlify.app",
-    image: "/tasawoq.png",
-    featured: true,
-  },
-  {
-    name: "Linkup",
-    tags: ["Fullstack", "Social Media"],
-    stack: ["React.js", "Next.js", "TypeScript", "Tailwind CSS"],
-    description:
-      "Social media platform with user authentication, post creation, real-time updates, and fully responsive design.",
-    github: "https://github.com/YoussefMohammed93/Linkup",
-    demo: "https://linkup-pi.vercel.app",
-    image: "/linkup.png",
-  },
-  {
-    name: "Taskmate",
-    tags: ["Fullstack", "Productivity"],
-    stack: ["React.js", "Next.js", "TypeScript"],
-    description:
-      "Comprehensive task management app featuring CRUD operations, real-time updates, and user authentication. Optimized for productivity across all devices.",
-    github: "https://github.com/YoussefMohammed93/Taskmate",
-    demo: "https://taskmate-delta.vercel.app",
-    image: "/taskmate.png",
-  },
-  {
-    name: "Frontend Hub",
-    tags: ["Frontend", "Education"],
-    stack: ["React.js", "Next.js", "TypeScript", "Convex"],
-    description:
-      "Developer learning platform with organized technical content and accessibility-focused design for developers of all skill levels.",
-    github: "https://github.com/YoussefMohammed93/Frontend-Hub",
-    demo: "https://frontend-hub-xi.vercel.app",
-    image: "/frontendhub.png",
-  },
-  {
-    name: "Notion Clone",
-    tags: ["Fullstack", "Productivity"],
-    stack: ["Next.js", "TypeScript", "Convex", "Tailwind CSS"],
-    description:
-      "Notion clone application allowing users to create, edit, and delete notes, notebooks, and tags. Features real-time updates, user authentication, and responsive design.",
-    github: "https://github.com/YoussefMohammed93/Notion-Clone",
-    demo: "https://notion-clone-matrix.vercel.app",
-    image: "/notion.png",
-  },
-];
+import { projects } from "@/lib/data/projects";
 
 /* ─── Main Section ─── */
 export function Projects() {
@@ -146,145 +55,155 @@ export function Projects() {
       /* ── Responsive: Desktop vs Mobile ── */
       const mm = gsap.matchMedia();
 
-      /* ━━ Desktop: Horizontal scroll showcase ━━ */
-      mm.add("(min-width: 1024px)", () => {
-        const track = container.current?.querySelector(
-          ".projects-track",
-        ) as HTMLElement;
-        const slides = gsap.utils.toArray<HTMLElement>(".project-slide");
-        if (!track || slides.length === 0) return;
+      mm.add(
+        {
+          isDesktop: "(min-width: 1024px)",
+          isMobile: "(max-width: 1023px)",
+          reduceMotion: "(prefers-reduced-motion: reduce)",
+        },
+        (context) => {
+          const { isDesktop, reduceMotion } = context.conditions as {
+            isDesktop: boolean;
+            reduceMotion: boolean;
+          };
 
-        // First slide: reveal when pin wrapper enters viewport
-        gsap.fromTo(
-          slides[0].querySelectorAll(".slide-image, .slide-content"),
-          { opacity: 0, y: 40 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            stagger: 0.2,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: ".projects-pin-wrapper",
-              start: "top 70%",
-              toggleActions: "play none none none",
-            },
-          },
-        );
+          /* ━━ Desktop (No Reduced Motion): Horizontal scroll showcase ━━ */
+          if (isDesktop && !reduceMotion) {
+            const track = container.current?.querySelector(
+              ".projects-track",
+            ) as HTMLElement;
+            const slides = gsap.utils.toArray<HTMLElement>(".project-slide");
+            if (!track || slides.length === 0) return;
 
-        // Controls reveal
-        gsap.fromTo(
-          ".projects-controls",
-          { opacity: 0, y: 20 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: ".projects-pin-wrapper",
-              start: "top 70%",
-              toggleActions: "play none none none",
-            },
-          },
-        );
-
-        // Horizontal scroll tween — ease: "none" is CRITICAL per GSAP best practices
-        const scrollTween = gsap.to(track, {
-          x: () => -(track.scrollWidth - window.innerWidth),
-          ease: "none",
-          scrollTrigger: {
-            trigger: ".projects-pin-wrapper",
-            pin: true,
-            scrub: 1,
-            start: "top top",
-            end: () => "+=" + (track.scrollWidth - window.innerWidth),
-            invalidateOnRefresh: true,
-            onUpdate: (self) => {
-              // Update progress bar width
-              if (progressRef.current) {
-                progressRef.current.style.width = `${self.progress * 100}%`;
-              }
-              // Update slide counter
-              if (counterRef.current) {
-                const idx = Math.min(
-                  slides.length - 1,
-                  Math.round(self.progress * (slides.length - 1)),
-                );
-                counterRef.current.textContent = String(idx + 1).padStart(
-                  2,
-                  "0",
-                );
-              }
-            },
-          },
-        });
-
-        // Per-slide content reveals for slides 2+ using containerAnimation
-        slides.slice(1).forEach((slide) => {
-          const image = slide.querySelector(".slide-image");
-          const content = slide.querySelector(".slide-content");
-
-          if (image) {
+            // First slide: reveal when pin wrapper enters viewport
             gsap.fromTo(
-              image,
-              { opacity: 0, x: -40, scale: 0.95 },
-              {
-                opacity: 1,
-                x: 0,
-                scale: 1,
-                duration: 1,
-                ease: "power3.out",
-                scrollTrigger: {
-                  trigger: slide,
-                  containerAnimation: scrollTween,
-                  start: "left 80%",
-                  toggleActions: "play none none none",
-                },
-              },
-            );
-          }
-
-          if (content) {
-            gsap.fromTo(
-              content,
-              { opacity: 0, y: 50 },
+              slides[0].querySelectorAll(".slide-image, .slide-content"),
+              { opacity: 0, y: 40 },
               {
                 opacity: 1,
                 y: 0,
                 duration: 1,
+                stagger: 0.2,
                 ease: "power3.out",
                 scrollTrigger: {
-                  trigger: slide,
-                  containerAnimation: scrollTween,
-                  start: "left 70%",
+                  trigger: ".projects-pin-wrapper",
+                  start: "top 70%",
                   toggleActions: "play none none none",
                 },
               },
             );
-          }
-        });
-      });
 
-      /* ━━ Mobile: Vertical staggered reveal ━━ */
-      mm.add("(max-width: 1023px)", () => {
-        ScrollTrigger.batch(".project-card-mobile", {
-          onEnter: (elements) => {
+            // Controls reveal
             gsap.fromTo(
-              elements,
-              { opacity: 0, y: 50 },
+              ".projects-controls",
+              { opacity: 0, y: 20 },
               {
                 opacity: 1,
                 y: 0,
                 duration: 0.8,
-                stagger: 0.15,
                 ease: "power3.out",
+                scrollTrigger: {
+                  trigger: ".projects-pin-wrapper",
+                  start: "top 70%",
+                  toggleActions: "play none none none",
+                },
               },
             );
-          },
-          start: "top 85%",
-        });
-      });
+
+            // Horizontal scroll tween
+            const scrollTween = gsap.to(track, {
+              x: () => -(track.scrollWidth - window.innerWidth),
+              ease: "none",
+              scrollTrigger: {
+                trigger: ".projects-pin-wrapper",
+                pin: true,
+                scrub: 1,
+                start: "top top",
+                end: () => "+=" + (track.scrollWidth - window.innerWidth),
+                invalidateOnRefresh: true,
+                onUpdate: (self) => {
+                  if (progressRef.current) {
+                    progressRef.current.style.width = `${self.progress * 100}%`;
+                  }
+                  if (counterRef.current) {
+                    const idx = Math.min(
+                      slides.length - 1,
+                      Math.round(self.progress * (slides.length - 1)),
+                    );
+                    counterRef.current.textContent = String(idx + 1).padStart(
+                      2,
+                      "0",
+                    );
+                  }
+                },
+              },
+            });
+
+            // Per-slide content reveals
+            slides.slice(1).forEach((slide) => {
+              const image = slide.querySelector(".slide-image");
+              const content = slide.querySelector(".slide-content");
+
+              if (image) {
+                gsap.fromTo(
+                  image,
+                  { opacity: 0, x: -40, scale: 0.95 },
+                  {
+                    opacity: 1,
+                    x: 0,
+                    scale: 1,
+                    duration: 1,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                      trigger: slide,
+                      containerAnimation: scrollTween,
+                      start: "left 80%",
+                      toggleActions: "play none none none",
+                    },
+                  },
+                );
+              }
+
+              if (content) {
+                gsap.fromTo(
+                  content,
+                  { opacity: 0, y: 50 },
+                  {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                      trigger: slide,
+                      containerAnimation: scrollTween,
+                      start: "left 70%",
+                      toggleActions: "play none none none",
+                    },
+                  },
+                );
+              }
+            });
+          } else {
+            /* ━━ Mobile OR Desktop with Reduced Motion: Vertical staggered reveal ━━ */
+            ScrollTrigger.batch(".project-card-mobile", {
+              onEnter: (elements) => {
+                gsap.fromTo(
+                  elements,
+                  { opacity: 0, y: reduceMotion ? 0 : 50 },
+                  {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    stagger: reduceMotion ? 0.05 : 0.15,
+                    ease: "power3.out",
+                  },
+                );
+              },
+              start: "top 85%",
+            });
+          }
+        },
+      );
     },
     { scope: container },
   );

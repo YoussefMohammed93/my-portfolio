@@ -83,36 +83,59 @@ export function Preloader() {
 
       // When 100% is reached, trigger exit
       if (progress >= 100 && !isLoaded) {
-        const tl = gsap.timeline({
-          onComplete: () => setIsVisible(false),
-        });
+        const mm = gsap.matchMedia();
+        mm.add(
+          {
+            reduceMotion: "(prefers-reduced-motion: reduce)",
+            noPreference: "(prefers-reduced-motion: no-preference)",
+          },
+          (context) => {
+            const { reduceMotion } = context.conditions as {
+              reduceMotion: boolean;
+            };
 
-        tl.to(".preloader-logo", {
-          scale: 1.1,
-          opacity: 0,
-          duration: 0.8,
-          ease: "expo.in",
-          delay: 0.5,
-        })
-          .to(
-            ".preloader-counter",
-            {
-              opacity: 0,
-              y: -20,
-              duration: 0.6,
-              ease: "expo.out",
-            },
-            "-=0.4",
-          )
-          .add(() => {
-            // CRITICAL: Signal that content can start animating as the curtain begins to lift
-            setIsLoaded(true);
-          })
-          .to(container.current, {
-            yPercent: -100,
-            duration: 1.2,
-            ease: "expo.inOut",
-          });
+            const tl = gsap.timeline({
+              onComplete: () => setIsVisible(false),
+            });
+
+            if (reduceMotion) {
+              // Simple fade out for reduced motion
+              tl.to(container.current, {
+                opacity: 0,
+                duration: 1,
+                ease: "power2.inOut",
+                onStart: () => setIsLoaded(true),
+              });
+            } else {
+              // Standard dramatic exit
+              tl.to(".preloader-logo", {
+                scale: 1.1,
+                opacity: 0,
+                duration: 0.8,
+                ease: "expo.in",
+                delay: 0.5,
+              })
+                .to(
+                  ".preloader-counter",
+                  {
+                    opacity: 0,
+                    y: -20,
+                    duration: 0.6,
+                    ease: "expo.out",
+                  },
+                  "-=0.4",
+                )
+                .add(() => {
+                  setIsLoaded(true);
+                })
+                .to(container.current, {
+                  yPercent: -100,
+                  duration: 1.2,
+                  ease: "expo.inOut",
+                });
+            }
+          },
+        );
       }
     },
     { scope: container, dependencies: [progress] },

@@ -111,69 +111,88 @@ export function Experience() {
 
   useGSAP(
     () => {
-      /* ── Heading reveal ── */
-      const headingTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: ".experience-heading-wrapper",
-          start: "top 80%",
-          toggleActions: "play none none none",
-        },
-        defaults: { ease: "power3.out" },
-      });
+      const mm = gsap.matchMedia();
 
-      headingTl
-        .fromTo(
-          ".experience-heading",
-          { y: 60, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.8 },
-        )
-        .fromTo(
-          ".experience-bar",
-          { scaleX: 0, opacity: 0, transformOrigin: "left center" },
-          { scaleX: 1, opacity: 1, duration: 0.8, ease: "power4.out" },
-          "-=0.4",
-        );
-
-      /* ── Timeline items reveal ── */
-      const items = gsap.utils.toArray<HTMLElement>(".timeline-item");
-
-      items.forEach((item, i) => {
-        const dot = item.querySelector(".timeline-dot");
-        const content = item.querySelector(".timeline-content");
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: item,
-            start: "top 85%",
-            toggleActions: "play none none none",
-          },
-        });
-
-        tl.fromTo(
-          dot,
-          { scale: 0, opacity: 0 },
-          { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" },
-        ).fromTo(
-          content,
-          { y: 30, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
-          "-=0.2",
-        );
-      });
-
-      /* ── Timeline line animation ── */
-      gsap.fromTo(
-        ".timeline-line",
-        { scaleY: 0, transformOrigin: "top" },
+      mm.add(
         {
-          scaleY: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: ".timeline-container",
-            start: "top 80%",
-            end: "bottom 80%",
-            scrub: 1,
-          },
+          reduceMotion: "(prefers-reduced-motion: reduce)",
+          noPreference: "(prefers-reduced-motion: no-preference)",
+        },
+        (context) => {
+          const { reduceMotion } = context.conditions as {
+            reduceMotion: boolean;
+          };
+
+          /* ── Heading reveal ── */
+          const headingTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: ".experience-heading-wrapper",
+              start: "top 80%",
+              toggleActions: "play none none none",
+            },
+            defaults: { ease: "power3.out" },
+          });
+
+          headingTl
+            .fromTo(
+              ".experience-heading",
+              { y: reduceMotion ? 0 : 60, opacity: 0 },
+              { y: 0, opacity: 1, duration: 0.8 },
+            )
+            .fromTo(
+              ".experience-bar",
+              { scaleX: 0, opacity: 0, transformOrigin: "left center" },
+              { scaleX: 1, opacity: 1, duration: 0.8, ease: "power4.out" },
+              "-=0.4",
+            );
+
+          /* ── Timeline items reveal ── */
+          const items = gsap.utils.toArray<HTMLElement>(".timeline-item");
+
+          items.forEach((item, i) => {
+            const dot = item.querySelector(".timeline-dot");
+            const content = item.querySelector(".timeline-content");
+
+            const tl = gsap.timeline({
+              scrollTrigger: {
+                trigger: item,
+                start: "top 85%",
+                toggleActions: "play none none none",
+              },
+            });
+
+            tl.fromTo(
+              dot,
+              { scale: reduceMotion ? 1 : 0, opacity: 0 },
+              {
+                scale: 1,
+                opacity: 1,
+                duration: 0.5,
+                ease: reduceMotion ? "power2.out" : "back.out(1.7)",
+              },
+            ).fromTo(
+              content,
+              { y: reduceMotion ? 0 : 30, opacity: 0 },
+              { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
+              "-=0.2",
+            );
+          });
+
+          /* ── Timeline line animation ── */
+          gsap.fromTo(
+            ".timeline-line",
+            { scaleY: 0, transformOrigin: "top" },
+            {
+              scaleY: 1,
+              ease: "none",
+              scrollTrigger: {
+                trigger: ".timeline-container",
+                start: "top 80%",
+                end: "bottom 80%",
+                scrub: 1,
+              },
+            },
+          );
         },
       );
     },

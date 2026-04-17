@@ -45,29 +45,58 @@ export function Navbar() {
     () => {
       if (!isLoaded) return;
 
-      const tl = gsap.timeline({
-        defaults: { ease: "power3.out", duration: 0.75 },
-      });
+      const mm = gsap.matchMedia();
 
-      tl.fromTo(
-        [".nav-logo", ".nav-action"],
-        { y: -50, opacity: 0 },
+      mm.add(
         {
-          y: 0,
-          opacity: 1,
-          stagger: 0.01,
-          delay: 0.4,
+          reduceMotion: "(prefers-reduced-motion: reduce)",
+          noPreference: "(prefers-reduced-motion: no-preference)",
         },
-      ).fromTo(
-        ".nav-link",
-        { y: -50, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          stagger: 0.01,
-          delay: 0.4,
+        (context) => {
+          const { reduceMotion } = context.conditions as {
+            reduceMotion: boolean;
+          };
+
+          const tl = gsap.timeline({
+            defaults: { ease: "power3.out", duration: 0.75 },
+          });
+
+          if (reduceMotion) {
+            // Simple fade-in for reduced motion
+            tl.fromTo(
+              [".nav-logo", ".nav-action", ".nav-link"],
+              { opacity: 0 },
+              {
+                opacity: 1,
+                stagger: 0.05,
+                delay: 0.2,
+                duration: 1,
+              },
+            );
+          } else {
+            // Standard sliding entrance
+            tl.fromTo(
+              [".nav-logo", ".nav-action"],
+              { y: -50, opacity: 0 },
+              {
+                y: 0,
+                opacity: 1,
+                stagger: 0.01,
+                delay: 0.4,
+              },
+            ).fromTo(
+              ".nav-link",
+              { y: -50, opacity: 0 },
+              {
+                y: 0,
+                opacity: 1,
+                stagger: 0.01,
+                delay: 0.4,
+              },
+              "-=0.6",
+            );
+          }
         },
-        "-=0.6",
       );
     },
     { scope: container, dependencies: [isLoaded] },
@@ -102,6 +131,7 @@ export function Navbar() {
                   width={48}
                   height={48}
                   className="size-12 rounded-lg overflow-hidden object-cover"
+                  priority
                 />
                 <span className="text-2xl font-bold font-montserrat tracking-tight pb-1 pt-2">
                   YM

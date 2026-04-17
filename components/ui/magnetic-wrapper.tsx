@@ -20,11 +20,13 @@ export function MagneticWrapper({ children, className }: MagneticWrapperProps) {
     if (!child) return;
 
     const handleMouseLeave = () => {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       // Reset scale on leave
       gsap.to(child, { scale: 1, duration: 0.5, ease: "back.out(1.5)" });
     };
 
     const handleMouseEnter = () => {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       // Zoom slightly on hover
       gsap.to(child, { scale: 1.1, duration: 0.5, ease: "back.out(1.5)" });
     };

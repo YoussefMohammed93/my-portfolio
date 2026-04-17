@@ -34,64 +34,77 @@ export function About() {
 
   useGSAP(
     () => {
-      // Background Blooms Animation
-      gsap.to(".about-blob", {
-        x: "random(-50, 50)",
-        y: "random(-50, 50)",
-        rotation: "random(-20, 20)",
-        duration: "random(12, 18)",
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-        stagger: {
-          each: 2.5,
-          from: "random",
-        },
-      });
+      const mm = gsap.matchMedia();
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: container.current,
-          start: "top 75%",
-          end: "bottom 20%",
-          toggleActions: "play none none none",
+      mm.add(
+        {
+          reduceMotion: "(prefers-reduced-motion: reduce)",
+          noPreference: "(prefers-reduced-motion: no-preference)",
         },
-        defaults: { ease: "power3.out" },
-      });
+        (context) => {
+          const { reduceMotion } = context.conditions as {
+            reduceMotion: boolean;
+          };
 
-      // Heading Reveal
-      tl.fromTo(
-        ".about-heading",
-        { y: 60, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8 },
-      )
-        .fromTo(
-          ".about-line",
-          { scaleX: 0, opacity: 0, transformOrigin: "left center" },
-          { scaleX: 1, opacity: 1, duration: 0.8, ease: "power4.out" },
-          "-=0.4",
-        )
-        // Image Side Reveal
-        .fromTo(
-          ".about-image-wrapper",
-          { x: 80, opacity: 0, scale: 0.95 },
-          { x: 0, opacity: 1, scale: 1, duration: 1.2, ease: "power4.out" },
-          "-=0.6",
-        )
-        // Text Content Animation
-        .fromTo(
-          ".about-text-content",
-          { y: 40, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.8, stagger: 0.15 },
-          "-=1.0",
-        )
-        // Stat Cards Stagger Reveal
-        .fromTo(
-          ".about-stat-card",
-          { y: 30, opacity: 0, scale: 0.9 },
-          { y: 0, opacity: 1, scale: 1, duration: 0.6, stagger: 0.15 },
-          "-=0.4",
-        );
+          if (!reduceMotion) {
+            // Background Blooms Animation — Only for no-preference
+            gsap.to(".about-blob", {
+              x: "random(-50, 50)",
+              y: "random(-50, 50)",
+              rotation: "random(-20, 20)",
+              duration: "random(12, 18)",
+              repeat: -1,
+              yoyo: true,
+              ease: "sine.inOut",
+              stagger: {
+                each: 2.5,
+                from: "random",
+              },
+            });
+          }
+
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: container.current,
+              start: "top 75%",
+              end: "bottom 20%",
+              toggleActions: "play none none none",
+            },
+            defaults: { ease: "power3.out" },
+          });
+
+          // Standard reveal but with reduced motion checks
+          tl.fromTo(
+            ".about-heading",
+            { y: reduceMotion ? 0 : 60, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.8 },
+          )
+            .fromTo(
+              ".about-line",
+              { scaleX: 0, opacity: 0, transformOrigin: "left center" },
+              { scaleX: 1, opacity: 1, duration: 0.8, ease: "power4.out" },
+              "-=0.4",
+            )
+            .fromTo(
+              ".about-image-wrapper",
+              { x: reduceMotion ? 0 : 80, opacity: 0, scale: reduceMotion ? 1 : 0.95 },
+              { x: 0, opacity: 1, scale: 1, duration: 1.2, ease: "power4.out" },
+              "-=0.6",
+            )
+            .fromTo(
+              ".about-text-content",
+              { y: reduceMotion ? 0 : 40, opacity: 0 },
+              { y: 0, opacity: 1, duration: 0.8, stagger: reduceMotion ? 0.05 : 0.15 },
+              "-=1.0",
+            )
+            .fromTo(
+              ".about-stat-card",
+              { y: reduceMotion ? 0 : 30, opacity: 0, scale: reduceMotion ? 1 : 0.9 },
+              { y: 0, opacity: 1, scale: 1, duration: 0.6, stagger: reduceMotion ? 0.05 : 0.15 },
+              "-=0.4",
+            );
+        },
+      );
     },
     { scope: container },
   );

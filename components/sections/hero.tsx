@@ -25,47 +25,127 @@ export function Hero() {
     lenis?.scrollTo("#about");
   };
 
+  const reactSnapshotRef = useRef<HTMLDivElement>(null);
+  const nodeSnapshotRef = useRef<HTMLDivElement>(null);
+
   useGSAP(
     () => {
       if (!isLoaded) return;
 
-      // Split the heading into characters with a clip-mask for reveal
-      const split = SplitText.create(".hero-heading", {
-        type: "chars",
-        mask: "chars",
-      });
+      const mm = gsap.matchMedia();
 
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-
-      // Animate non-heading hero elements staggered
-      tl.to(".hero-element", {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        stagger: 0.15,
-        delay: 0.2,
-      });
-
-      // Reveal the heading container, then cascade characters from behind their masks
-      tl.set(".hero-heading", { autoAlpha: 1 }, 0.35).from(
-        split.chars,
+      mm.add(
         {
-          yPercent: 100,
-          duration: 0.8,
-          stagger: 0.03,
-          ease: "power4.out",
+          reduceMotion: "(prefers-reduced-motion: reduce)",
+          noPreference: "(prefers-reduced-motion: no-preference)",
         },
-        0.35,
-      );
+        (context) => {
+          const { reduceMotion } = context.conditions as {
+            reduceMotion: boolean;
+          };
 
-      // Animate glow fade in
-      gsap.to(".hero-glow", {
-        opacity: 1,
-        scale: 1,
-        duration: 2,
-        ease: "power2.out",
-        delay: 0.5,
-      });
+          const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+          if (reduceMotion) {
+            // Simplified fade-in for reduced motion
+            tl.to(".hero-element", {
+              opacity: 1,
+              duration: 1,
+              stagger: 0.1,
+              delay: 0.2,
+            }).to(
+              ".hero-heading",
+              {
+                autoAlpha: 1,
+                duration: 1,
+              },
+              0.3,
+            );
+
+            gsap.to(".hero-glow", {
+              opacity: 0.6,
+              duration: 1,
+              delay: 0.5,
+            });
+          } else {
+            // Standard dynamic animations
+            const split = SplitText.create(".hero-heading", {
+              type: "chars",
+              mask: "chars",
+            });
+
+            tl.to(".hero-element", {
+              y: 0,
+              opacity: 1,
+              duration: 1,
+              stagger: 0.15,
+              delay: 0.2,
+            });
+
+            tl.set(".hero-heading", { autoAlpha: 1 }, 0.35).from(
+              split.chars,
+              {
+                yPercent: 100,
+                duration: 0.8,
+                stagger: 0.03,
+                ease: "power4.out",
+              },
+              0.35,
+            );
+
+            gsap.to(".hero-glow", {
+              opacity: 1,
+              scale: 1,
+              duration: 2,
+              ease: "power2.out",
+              delay: 0.5,
+            });
+
+            // Parallax Effect
+            const reactSnapshot = reactSnapshotRef.current;
+            const nodeSnapshot = nodeSnapshotRef.current;
+
+            if (reactSnapshot && nodeSnapshot) {
+              const xReactTo = gsap.quickTo(reactSnapshot, "x", {
+                duration: 0.6,
+                ease: "power3",
+              });
+              const yReactTo = gsap.quickTo(reactSnapshot, "y", {
+                duration: 0.6,
+                ease: "power3",
+              });
+              const xNodeTo = gsap.quickTo(nodeSnapshot, "x", {
+                duration: 0.6,
+                ease: "power3",
+              });
+              const yNodeTo = gsap.quickTo(nodeSnapshot, "y", {
+                duration: 0.6,
+                ease: "power3",
+              });
+
+              const handleMouseMove = (e: MouseEvent) => {
+                const { clientX, clientY } = e;
+                const { innerWidth, innerHeight } = window;
+
+                // Normalized mouse coordinates (-0.5 to 0.5)
+                const x = clientX / innerWidth - 0.5;
+                const y = clientY / innerHeight - 0.5;
+
+                // React Snapshot moves slightly opposite to mouse
+                xReactTo(x * -30);
+                yReactTo(y * -30);
+
+                // Node Snapshot moves slightly with mouse (different depth)
+                xNodeTo(x * 20);
+                yNodeTo(y * 20);
+              };
+
+              window.addEventListener("mousemove", handleMouseMove);
+              return () => window.removeEventListener("mousemove", handleMouseMove);
+            }
+          }
+        },
+      );
     },
     { scope: container, dependencies: [isLoaded] },
   );
@@ -85,8 +165,12 @@ export function Hero() {
       <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.08)_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)] pointer-events-none -z-20" />
 
       {/* Glassmorphic Code Snapshots — behind text, above grid */}
-      <ReactSnapshot />
-      <NodeSnapshot />
+      <div ref={reactSnapshotRef} className="absolute inset-0 z-0 pointer-events-none">
+        <ReactSnapshot />
+      </div>
+      <div ref={nodeSnapshotRef} className="absolute inset-0 z-0 pointer-events-none">
+        <NodeSnapshot />
+      </div>
 
       {/* Spotlight Effects */}
       <Spotlight
@@ -123,7 +207,7 @@ export function Hero() {
         {/* Short Bio */}
         <p className="hero-element opacity-0 translate-y-8 max-w-2xl mx-auto text-base md:text-xl text-muted-foreground leading-relaxed mb-12">
           I build modern, scalable web applications — from pixel-perfect
-          frontends to robust backends. 3+ years of experience, 35+ projects
+          frontends to robust backends. 3+ years of experience, 45+ projects
           delivered.
         </p>
 
