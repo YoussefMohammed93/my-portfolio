@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 
 import { cn } from "@/lib/utils";
 import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { LenisProvider } from "@/components/lenis-provider";
 import { CustomCursor } from "@/components/ui/custom-cursor";
@@ -79,6 +80,7 @@ export default function RootLayout({
           <LenisProvider>
             <Navbar />
             <main className="flex-1 w-full pt-16">{children}</main>
+            <Footer />
           </LenisProvider>
         </ThemeProvider>
       </body>

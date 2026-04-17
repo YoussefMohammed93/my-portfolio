@@ -150,7 +150,7 @@ export function Contact() {
               </p>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-11">
               <div className="contact-info-item flex items-start gap-4">
                 <div className="mt-1 p-3 rounded-xl bg-card border border-border flex items-center justify-center shrink-0">
                   <Mail className="w-5 h-5 text-primary" />
