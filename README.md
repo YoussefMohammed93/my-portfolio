@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Youssef Mohammed | Full-Stack Developer Portfolio
 
-## Getting Started
+A high-performance, visually stunning portfolio website built with the latest technologies to showcase my expertise in the MERN stack and modern web animations.
 
-First, run the development server:
+![Portfolio Preview](/public/logo.png)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Key Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Premium Animations**: Silky smooth transitions and text animations powered by GSAP (ScrollTrigger & SplitText).
+- **Responsive Design**: Fully optimized for all screen sizes using Tailwind CSS v4.
+- **High Performance**:
+  - Dynamic code splitting for faster initial load.
+  - Optimized asset delivery with Next.js Image component.
+  - Turbopack-powered build process.
+- **Accessibility (A11y)**: Built with screen readers in mind, featuring full ARIA label coverage and semantic HTML.
+- **Smooth Scrolling**: Implemented with Lenis for a consistent "premium" feel across all browsers.
+- **Modern UI/UX**:
+  - Glassmorphic code snapshots.
+  - Intelligent custom cursor.
+  - Dark/Light mode support.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Core**: [Next.js 16 (App Router)](https://nextjs.org/), [React 19](https://react.dev/), [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Animations**: [GSAP](https://greensock.com/gsap/) (ScrollTrigger, SplitText, MatchMedia)
+- **UI Components**: [shadcn/ui](https://ui.shadcn.com/), [Lucide React](https://lucide.dev/), [React Icons](https://react-icons.github.io/react-icons/)
+- **Forms**: [React Hook Form](https://react-hook-form.com/), [Zod](https://zod.dev/), [Formspree](https://formspree.io/)
+- **Smooth Scroll**: [Lenis](https://lenis.darkroom.engineering/)
 
-## Learn More
+## ⚡ Performance Optimization
 
-To learn more about Next.js, take a look at the following resources:
+This project is optimized for a near-perfect Lighthouse score:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Lazy Loading**: Sections below the fold are dynamically imported to reduce the main thread work.
+- **Image Optimization**: Images are served in modern formats with automatic resizing based on the viewport.
+- **Bundle Optimization**: Minified JavaScript and tree-shaken library imports.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📦 Installation & Setup
 
-## Deploy on Vercel
+1. **Clone the repository:**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```bash
+   git clone https://github.com/YoussefMohammed93/my-portfolio.git
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. **Install dependencies:**
+
+   ```bash
+   pnpm install
+   # or
+   npm install
+   ```
+
+3. **Run the development server:**
+
+   ```bash
+   pnpm dev
+   ```
+
+4. **Build for production:**
+   ```bash
+   pnpm build
+   ```
+
+## 📄 License
+
+This project is open-source and available under the MIT License.
+
+---
+
+Built with ❤️ by [Youssef Mohammed](https://github.com/YoussefMohammed93)
