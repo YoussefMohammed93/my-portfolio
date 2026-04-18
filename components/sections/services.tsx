@@ -72,30 +72,43 @@ export function Services() {
             reduceMotion: boolean;
           };
 
-          // Entrance animation for the title
-          gsap.from(".services-title", {
-            y: reduceMotion ? 0 : 30,
-            opacity: 0,
-            duration: 1,
-            ease: "power3.out",
+          // Unified timeline for expertise entrance
+          const tl = gsap.timeline({
             scrollTrigger: {
-              trigger: ".services-title",
-              start: "top 85%",
+              trigger: containerRef.current,
+              start: "top 75%",
+              toggleActions: "play none none none",
             },
+            defaults: { ease: "power3.out" },
           });
 
-          // Staggered entrance for cards
-          gsap.from(".service-card", {
-            y: reduceMotion ? 0 : 50,
-            opacity: 0,
-            duration: 0.8,
-            stagger: reduceMotion ? 0.05 : 0.15,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: ".services-grid",
-              start: "top 80%",
-            },
-          });
+          tl.fromTo(
+            ".services-title",
+            { y: reduceMotion ? 0 : 60, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.8, stagger: 0.2 },
+          )
+            .fromTo(
+              ".services-bar",
+              { scaleX: 0, opacity: 0, transformOrigin: "left center" },
+              { scaleX: 1, opacity: 1, duration: 0.8, ease: "power4.out" },
+              "-=0.4",
+            )
+            .fromTo(
+              ".service-card",
+              {
+                y: reduceMotion ? 0 : 40,
+                opacity: 0,
+                scale: reduceMotion ? 1 : 0.95,
+              },
+              {
+                y: 0,
+                opacity: 1,
+                scale: 1,
+                duration: 0.8,
+                stagger: reduceMotion ? 0.05 : 0.12,
+              },
+              "-=0.5",
+            );
         },
       );
     },
@@ -110,13 +123,13 @@ export function Services() {
     >
       <div className="container mx-auto px-4 md:px-8 max-w-7xl relative z-10">
         <div className="text-start mb-16">
-          <h2 className="services-title text-3xl md:text-5xl font-bold font-heading mb-4">
+          <h2 className="services-title opacity-0 text-3xl md:text-5xl font-bold font-heading mb-4">
             Services{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent italic">
               Expertise
             </span>
           </h2>
-          <div className="services-title w-20 h-1.5 bg-gradient-to-r from-primary to-accent/50 rounded-full" />
+          <div className="services-bar opacity-0 w-20 h-1.5 bg-gradient-to-r from-primary to-accent/50 rounded-full" />
         </div>
 
         <div className="services-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

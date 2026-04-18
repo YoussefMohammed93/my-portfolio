@@ -38,6 +38,7 @@ export function Navbar() {
   const container = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -124,6 +125,7 @@ export function Navbar() {
                 className="nav-logo opacity-0 flex items-end gap-1 hover:opacity-90 transition-opacity"
                 onClick={closeMenu}
                 data-cursor="logo"
+                aria-label="Youssef Mohammed - Home"
               >
                 <Image
                   src="/logo.png"
@@ -150,6 +152,7 @@ export function Navbar() {
                       onClick={() => handleScroll(link.href)}
                       className="nav-link opacity-0 text-muted-foreground hover:text-primary transition-colors cursor-pointer py-1 px-2"
                       data-cursor="link"
+                      aria-label={`Scroll to ${link.name} section`}
                     >
                       {link.name}
                     </button>
@@ -215,6 +218,7 @@ export function Navbar() {
                       key={link.name}
                       onClick={() => handleScroll(link.href)}
                       className="group flex items-center justify-between w-full text-left rounded-xl px-4 py-4 text-xl font-semibold text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all duration-300 cursor-pointer"
+                      aria-label={`Go to ${link.name} section`}
                     >
                       <span>{link.name}</span>
                       <span className="opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-primary">

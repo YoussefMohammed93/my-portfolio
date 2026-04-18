@@ -141,7 +141,8 @@ export function Hero() {
               };
 
               window.addEventListener("mousemove", handleMouseMove);
-              return () => window.removeEventListener("mousemove", handleMouseMove);
+              return () =>
+                window.removeEventListener("mousemove", handleMouseMove);
             }
           }
         },
@@ -165,10 +166,16 @@ export function Hero() {
       <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.08)_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)] pointer-events-none -z-20" />
 
       {/* Glassmorphic Code Snapshots — behind text, above grid */}
-      <div ref={reactSnapshotRef} className="absolute inset-0 z-0 pointer-events-none">
+      <div
+        ref={reactSnapshotRef}
+        className="absolute inset-0 z-0 pointer-events-none"
+      >
         <ReactSnapshot />
       </div>
-      <div ref={nodeSnapshotRef} className="absolute inset-0 z-0 pointer-events-none">
+      <div
+        ref={nodeSnapshotRef}
+        className="absolute inset-0 z-0 pointer-events-none"
+      >
         <NodeSnapshot />
       </div>
 
@@ -217,6 +224,7 @@ export function Hero() {
             size="lg"
             className="w-full sm:w-auto h-12 rounded-full font-medium cursor-pointer"
             onClick={() => lenis?.scrollTo("#projects")}
+            aria-label="View my featured projects"
           >
             <span className="flex items-center gap-2 px-5">
               <span className="text-base">View Projects</span>
@@ -228,6 +236,7 @@ export function Hero() {
             variant="outline"
             className="w-full sm:w-auto h-12 rounded-full font-medium cursor-pointer"
             onClick={() => lenis?.scrollTo("#contact")}
+            aria-label="Contact me for collaboration"
           >
             <span className="flex items-center gap-2 px-5">
               <span className="text-base">Contact Me</span>

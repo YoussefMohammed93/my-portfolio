@@ -1,19 +1,33 @@
 import "./globals.css";
 
+import dynamic from "next/dynamic";
+
 import type { Metadata } from "next";
 
 import { cn } from "@/lib/utils";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { Preloader } from "@/components/ui/preloader";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
 import { LenisProvider } from "@/components/lenis-provider";
-import { ScrollToTop } from "@/components/ui/scroll-to-top";
-import { CustomCursor } from "@/components/ui/custom-cursor";
 import { LoadingProvider } from "@/components/loading-context";
-import { ScrollProgress } from "@/components/ui/scroll-progress";
 import { IBM_Plex_Sans, Montserrat, Space_Grotesk } from "next/font/google";
+
+const Preloader = dynamic(() =>
+  import("@/components/ui/preloader").then((mod) => mod.Preloader),
+);
+
+const ScrollProgress = dynamic(() =>
+  import("@/components/ui/scroll-progress").then((mod) => mod.ScrollProgress),
+);
+
+const ScrollToTop = dynamic(() =>
+  import("@/components/ui/scroll-to-top").then((mod) => mod.ScrollToTop),
+);
+
+const CustomCursor = dynamic(() =>
+  import("@/components/ui/custom-cursor").then((mod) => mod.CustomCursor),
+);
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -103,7 +117,6 @@ export default function RootLayout({
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
-            enableSystem
             disableTransitionOnChange
           >
             <TooltipProvider>

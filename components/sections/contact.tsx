@@ -2,26 +2,28 @@
 
 import gsap from "gsap";
 
-import { useRef, useEffect } from "react";
+import * as z from "zod";
 import { useGSAP } from "@gsap/react";
+import { useRef, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Textarea } from "@/components/ui/textarea";
-import { FaLinkedin, FaGithub } from "react-icons/fa";
-import { useForm as useFormspree, ValidationError } from "@formspree/react";
-import { Mail, MapPin, Send, MessageSquare } from "lucide-react";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { FaLinkedin, FaGithub } from "react-icons/fa";
+import { Mail, MapPin, Send, MessageSquare } from "lucide-react";
+import { useForm as useFormspree, ValidationError } from "@formspree/react";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const contactSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
-  message: z.string().min(10, { message: "Message must be at least 10 characters" }),
+  message: z
+    .string()
+    .min(10, { message: "Message must be at least 10 characters" }),
 });
 
 type ContactFormValues = z.infer<typeof contactSchema>;
@@ -201,6 +203,7 @@ export function Contact() {
                   <a
                     href="mailto:youssefmohammed2093@gmail.com"
                     className="text-muted-foreground hover:text-primary transition-colors"
+                    aria-label="Send me an email"
                   >
                     youssefmohammed2093@gmail.com
                   </a>
@@ -232,6 +235,7 @@ export function Contact() {
                     target="_blank"
                     rel="noreferrer"
                     className="text-muted-foreground hover:text-primary transition-colors line-clamp-1"
+                    aria-label="Visit my LinkedIn profile"
                   >
                     Youssef Mohammed
                   </a>
@@ -251,6 +255,7 @@ export function Contact() {
                     target="_blank"
                     rel="noreferrer"
                     className="text-muted-foreground hover:text-primary transition-colors"
+                    aria-label="Visit my GitHub profile"
                   >
                     YoussefMohammed93
                   </a>
@@ -284,14 +289,21 @@ export function Contact() {
             ) : (
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="contact-form-item space-y-2">
-                  <Label htmlFor="name" className={errors.name ? "text-destructive" : ""}>Name</Label>
+                  <Label
+                    htmlFor="name"
+                    className={errors.name ? "text-destructive" : ""}
+                  >
+                    Name
+                  </Label>
                   <Input
                     id="name"
                     {...register("name")}
                     placeholder="John Doe"
                     readOnly={serverState.submitting}
                     className={`bg-background/50 border-border/50 focus-visible:ring-primary/20 dark:focus-visible:ring-primary/50 transition-all focus:border-transparent! rounded-xl ${
-                      errors.name ? "border-destructive/50 ring-1 ring-destructive/20" : ""
+                      errors.name
+                        ? "border-destructive/50 ring-1 ring-destructive/20"
+                        : ""
                     }`}
                   />
                   {errors.name && (
@@ -308,7 +320,12 @@ export function Contact() {
                 </div>
 
                 <div className="contact-form-item space-y-2">
-                  <Label htmlFor="email" className={errors.email ? "text-destructive" : ""}>Email Address</Label>
+                  <Label
+                    htmlFor="email"
+                    className={errors.email ? "text-destructive" : ""}
+                  >
+                    Email Address
+                  </Label>
                   <Input
                     id="email"
                     type="email"
@@ -316,7 +333,9 @@ export function Contact() {
                     placeholder="john@example.com"
                     readOnly={serverState.submitting}
                     className={`bg-background/50 border-border/50 focus-visible:ring-primary/20 dark:focus-visible:ring-primary/50 transition-all focus:border-transparent! transition-all rounded-xl ${
-                      errors.email ? "border-destructive/50 ring-1 ring-destructive/20" : ""
+                      errors.email
+                        ? "border-destructive/50 ring-1 ring-destructive/20"
+                        : ""
                     }`}
                   />
                   {errors.email && (
@@ -333,14 +352,21 @@ export function Contact() {
                 </div>
 
                 <div className="contact-form-item space-y-2">
-                  <Label htmlFor="message" className={errors.message ? "text-destructive" : ""}>Message</Label>
+                  <Label
+                    htmlFor="message"
+                    className={errors.message ? "text-destructive" : ""}
+                  >
+                    Message
+                  </Label>
                   <Textarea
                     id="message"
                     {...register("message")}
                     placeholder="Tell me about your project..."
                     readOnly={serverState.submitting}
                     className={`min-h-[150px] bg-background/50 resize-none border-border/50 focus-visible:ring-primary/20 dark:focus-visible:ring-primary/50 transition-all focus:border-transparent! transition-all rounded-xl ${
-                      errors.message ? "border-destructive/50 ring-1 ring-destructive/20" : ""
+                      errors.message
+                        ? "border-destructive/50 ring-1 ring-destructive/20"
+                        : ""
                     }`}
                   />
                   {errors.message && (
@@ -362,9 +388,16 @@ export function Contact() {
                     disabled={serverState.submitting}
                     className="w-full gap-2 font-medium rounded-xl h-11 transition-all group overflow-hidden relative"
                     size="lg"
+                    aria-label={
+                      serverState.submitting
+                        ? "Sending your message"
+                        : "Send your message"
+                    }
                   >
                     <span className="relative z-10 flex items-center justify-center gap-2">
-                      {serverState.submitting ? "Sending Message..." : "Send Message"}
+                      {serverState.submitting
+                        ? "Sending Message..."
+                        : "Send Message"}
                       {!serverState.submitting && <Send className="size-4" />}
                     </span>
                     <div className="absolute inset-0 bg-primary-foreground/10 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />

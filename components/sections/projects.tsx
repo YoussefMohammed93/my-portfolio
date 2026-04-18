@@ -271,7 +271,7 @@ export function Projects() {
                       alt={project.name}
                       fill
                       className="object-cover object-top scale-100 group-hover:scale-105 transition-transform duration-700 ease-out"
-                      sizes="50vw"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
                     />
                   </div>
                   {/* Project counter badge */}
@@ -383,7 +383,7 @@ export function Projects() {
                 alt={project.name}
                 fill
                 className="object-cover object-top"
-                sizes="(max-width: 768px) 100vw, 672px"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
               {project.featured && (
                 <div className="absolute top-3 left-3 z-10">

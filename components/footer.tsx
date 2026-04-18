@@ -110,6 +110,7 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex flex-col items-center justify-center hover:text-primary transition-colors duration-200 size-14 rounded-2xl bg-background dark:bg-secondary border border-border text-muted-foreground"
+                aria-label={`Visit my ${link.name} profile`}
               >
                 <link.icon className="size-5 md:size-6 mb-1" />
                 <span className="sr-only">{link.name}</span>

@@ -149,7 +149,7 @@ export function Experience() {
           /* ── Timeline items reveal ── */
           const items = gsap.utils.toArray<HTMLElement>(".timeline-item");
 
-          items.forEach((item, i) => {
+          items.forEach((item) => {
             const dot = item.querySelector(".timeline-dot");
             const content = item.querySelector(".timeline-content");
 
@@ -238,7 +238,10 @@ export function Experience() {
               >
                 {/* Timeline Dot */}
                 <div className="timeline-dot opacity-0 absolute -left-3 md:left-4 top-0 md:translate-x-[-4px] w-9 h-9 md:w-11 md:h-11 rounded-full bg-background dark:bg-primary border-2 border-primary flex items-center justify-center z-10 shadow-lg shadow-primary/20">
-                  <div className="text-primary dark:text-foreground">
+                  <div
+                    className="text-primary dark:text-foreground"
+                    aria-hidden="true"
+                  >
                     {exp.icon}
                   </div>
                 </div>
@@ -255,13 +258,19 @@ export function Experience() {
                         {exp.company}
                       </h4>
                       <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1.5">
-                          <Calendar className="w-4 h-4" />
+                        <div
+                          className="flex items-center gap-1.5"
+                          aria-label={`Period: ${exp.date}`}
+                        >
+                          <Calendar className="w-4 h-4" aria-hidden="true" />
                           <span>{exp.date}</span>
                         </div>
                         {exp.location && (
-                          <div className="flex items-center gap-1.5">
-                            <MapPin className="w-4 h-4" />
+                          <div
+                            className="flex items-center gap-1.5"
+                            aria-label={`Location: ${exp.location}`}
+                          >
+                            <MapPin className="w-4 h-4" aria-hidden="true" />
                             <span>{exp.location}</span>
                           </div>
                         )}
