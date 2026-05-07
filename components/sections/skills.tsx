@@ -1,7 +1,6 @@
 "use client";
 
 import gsap from "gsap";
-import Image from "next/image";
 
 import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
@@ -152,7 +151,7 @@ function SkillCard({ skill }: { skill: Skill }) {
       className="flex-shrink-0 flex items-center gap-3 bg-secondary/50 dark:bg-muted/50 border border-border rounded-xl px-5 py-3 select-none"
       data-cursor="hover"
     >
-      <Image
+      <img
         src={skill.icon}
         alt={skill.name}
         width={28}
